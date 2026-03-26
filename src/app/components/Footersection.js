@@ -246,7 +246,7 @@ export default function FooterSection() {
                   Join the mailing list for featured releases, collector
                   editions, reading notes, and curated library updates.
                 </p>
-
+ 
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <div className="group flex h-12 flex-1 items-center gap-3 rounded-full border border-white/12 bg-black/20 px-4 text-white/70 transition duration-300 focus-within:border-[#f1d8ac]/40 focus-within:bg-black/30">
                     <Mail

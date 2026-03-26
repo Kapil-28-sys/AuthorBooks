@@ -69,7 +69,9 @@ export default function ThirdSection() {
   const chapterDescRef = useRef(null);
   const progressRef = useRef(null);
 
-  const bigWordRef = useRef(null);
+  const bigWordDesktopRef = useRef(null);
+  const bigWordMobileRef = useRef(null);
+
   const galleryWrapRef = useRef(null);
   const glowRef = useRef(null);
 
@@ -77,8 +79,18 @@ export default function ThirdSection() {
   const lane2Ref = useRef(null);
   const lane3Ref = useRef(null);
 
+  const mobileGalleryRef = useRef(null);
+  const mobileCard1Ref = useRef(null);
+  const mobileCard2Ref = useRef(null);
+  const mobileCard3Ref = useRef(null);
+  const mobileCard4Ref = useRef(null);
+  const mobileCard5Ref = useRef(null);
+  const mobileCard6Ref = useRef(null);
+
   useGSAP(
     () => {
+      const isMobile = window.innerWidth < 768;
+
       const ctx = gsap.context(() => {
         const setFrame = (index) => {
           const item = storyFrames[index];
@@ -86,7 +98,9 @@ export default function ThirdSection() {
           if (chapterLabelRef.current) chapterLabelRef.current.textContent = item.label;
           if (chapterTitleRef.current) chapterTitleRef.current.textContent = item.title;
           if (chapterDescRef.current) chapterDescRef.current.textContent = item.desc;
-          if (bigWordRef.current) bigWordRef.current.textContent = item.word;
+
+          if (bigWordDesktopRef.current) bigWordDesktopRef.current.textContent = item.word;
+          if (bigWordMobileRef.current) bigWordMobileRef.current.textContent = item.word;
         };
 
         setFrame(0);
@@ -99,10 +113,167 @@ export default function ThirdSection() {
             ctaRef.current,
             chapterCardRef.current,
           ],
-          { opacity: 0, y: 40 }
+          { opacity: 0, y: isMobile ? 24 : 40 }
         );
 
-        gsap.set(bigWordRef.current, {
+        gsap.set(progressRef.current, {
+          scaleX: 0,
+          transformOrigin: "left center",
+        });
+
+        if (isMobile) {
+          gsap.set(bigWordMobileRef.current, {
+            opacity: 0.04,
+            y: 18,
+            scale: 0.98,
+          });
+
+          gsap.set(mobileGalleryRef.current, {
+            opacity: 0,
+            y: 24,
+            scale: 0.98,
+          });
+
+          gsap.set(
+            [
+              mobileCard1Ref.current,
+              mobileCard2Ref.current,
+              mobileCard3Ref.current,
+              mobileCard4Ref.current,
+              mobileCard5Ref.current,
+              mobileCard6Ref.current,
+            ],
+            {
+              opacity: 0,
+              y: 42,
+              scale: 0.96,
+            }
+          );
+
+          const mobileTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 82%",
+              end: "bottom 25%",
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          mobileTl
+            .to(
+              [badgeRef.current, titleRef.current, descRef.current, ctaRef.current],
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.55,
+                stagger: 0.08,
+                ease: "none",
+              },
+              0
+            )
+            .to(
+              chapterCardRef.current,
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.45,
+                ease: "none",
+              },
+              0.08
+            )
+            .to(
+              bigWordMobileRef.current,
+              {
+                opacity: 0.08,
+                y: 0,
+                scale: 1,
+                duration: 0.6,
+                ease: "none",
+              },
+              0.05
+            )
+            .to(
+              mobileGalleryRef.current,
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.7,
+                ease: "none",
+              },
+              0.1
+            )
+            .to(
+              progressRef.current,
+              {
+                scaleX: 0.4,
+                duration: 0.35,
+                ease: "none",
+              },
+              0.14
+            )
+            .to(
+              [mobileCard1Ref.current, mobileCard2Ref.current],
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.4,
+                stagger: 0.08,
+                ease: "none",
+              },
+              0.18
+            )
+            .to(
+              progressRef.current,
+              {
+                scaleX: 0.72,
+                duration: 0.35,
+                ease: "none",
+              },
+              0.48
+            )
+            .to({}, { duration: 0.01, onStart: () => setFrame(1) }, 0.5)
+            .to(
+              [mobileCard3Ref.current, mobileCard4Ref.current],
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.4,
+                stagger: 0.08,
+                ease: "none",
+              },
+              0.54
+            )
+            .to(
+              progressRef.current,
+              {
+                scaleX: 1,
+                duration: 0.35,
+                ease: "none",
+              },
+              0.84
+            )
+            .to({}, { duration: 0.01, onStart: () => setFrame(2) }, 0.86)
+            .to(
+              [mobileCard5Ref.current, mobileCard6Ref.current],
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.42,
+                stagger: 0.08,
+                ease: "none",
+              },
+              0.9
+            );
+
+          return;
+        }
+
+        gsap.set(bigWordDesktopRef.current, {
           opacity: 0.05,
           y: 30,
           scale: 0.94,
@@ -117,11 +288,6 @@ export default function ThirdSection() {
         gsap.set(glowRef.current, {
           opacity: 0.18,
           scale: 0.82,
-        });
-
-        gsap.set(progressRef.current, {
-          scaleX: 0,
-          transformOrigin: "left center",
         });
 
         gsap.set(lane1Ref.current, { y: -120 });
@@ -173,7 +339,7 @@ export default function ThirdSection() {
             0
           )
           .to(
-            bigWordRef.current,
+            bigWordDesktopRef.current,
             {
               opacity: 0.1,
               y: 0,
@@ -240,7 +406,7 @@ export default function ThirdSection() {
             1.06
           )
           .to(
-            bigWordRef.current,
+            bigWordDesktopRef.current,
             {
               opacity: 0.06,
               scale: 1.05,
@@ -261,7 +427,7 @@ export default function ThirdSection() {
             1.14
           )
           .to(
-            bigWordRef.current,
+            bigWordDesktopRef.current,
             {
               opacity: 0.1,
               scale: 1,
@@ -317,7 +483,7 @@ export default function ThirdSection() {
             1.86
           )
           .to(
-            bigWordRef.current,
+            bigWordDesktopRef.current,
             {
               opacity: 0.06,
               scale: 1.05,
@@ -338,7 +504,7 @@ export default function ThirdSection() {
             1.94
           )
           .to(
-            bigWordRef.current,
+            bigWordDesktopRef.current,
             {
               opacity: 0.1,
               scale: 1,
@@ -391,13 +557,12 @@ export default function ThirdSection() {
   );
 
   return (
-     
-
-    
-  <>
-    <section className="hidden md:block">
-       <div ref={sectionRef} className="relative min-h-screen overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
+    <section
+      ref={rootRef}
+      className="relative overflow-hidden bg-transparent text-white"
+    >
+      <div ref={sectionRef} className="relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.04),transparent_30%)]" />
           <div
             ref={glowRef}
@@ -405,18 +570,18 @@ export default function ThirdSection() {
           />
         </div>
 
-        <div className="relative z-10 mx-auto grid min-h-screen max-w-7xl items-center gap-12 px-6 py-24 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <div className="relative z-10 mx-auto grid min-h-[100svh] max-w-7xl items-center gap-10 px-4 py-14 sm:px-5 sm:py-16 md:px-6 md:py-20 lg:min-h-screen lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:px-8 lg:py-24">
           <div>
             <p
               ref={badgeRef}
-              className="inline-flex rounded-full border border-[#d8aa70]/16 bg-[#d8aa70]/8 px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-[#d8aa70]"
+              className="inline-flex rounded-full border border-[#d8aa70]/16 bg-[#d8aa70]/8 px-3 py-2 text-[10px] uppercase tracking-[0.28em] text-[#d8aa70] sm:px-4 sm:text-[11px] sm:tracking-[0.34em]"
             >
               Gallery Motion
             </p>
 
             <h2
               ref={titleRef}
-              className="mt-5 max-w-[680px] text-4xl font-semibold leading-[0.92] tracking-[-0.06em] sm:text-5xl lg:text-7xl"
+              className="mt-4 max-w-[680px] text-3xl font-semibold leading-[0.92] tracking-[-0.06em] sm:mt-5 sm:text-4xl md:text-5xl lg:text-7xl"
             >
               A moving exhibition wall.
               <span className="block text-[#d8aa70]">Built for premium rhythm.</span>
@@ -424,14 +589,14 @@ export default function ThirdSection() {
 
             <p
               ref={descRef}
-              className="mt-7 max-w-xl text-lg leading-8 text-white/60"
+              className="mt-5 max-w-xl text-sm leading-7 text-white/60 sm:mt-6 sm:text-base sm:leading-8 lg:mt-7 lg:text-lg"
             >
               Yahan ek hi card repeat feel nahi aata. Multi-lane motion se section
               rich lagta hai, aur homepage ko campaign-level scale milta hai.
             </p>
 
-            <div ref={ctaRef} className="mt-10 flex flex-wrap gap-4">
-              <button className="group inline-flex items-center gap-2 rounded-full bg-[#f7f2ea] px-7 py-3.5 text-sm font-semibold text-black transition hover:scale-[1.02]">
+            <div ref={ctaRef} className="mt-7 flex flex-wrap gap-3 sm:mt-8 sm:gap-4 lg:mt-10">
+              <button className="group inline-flex items-center gap-2 rounded-full bg-[#f7f2ea] px-5 py-3 text-xs font-semibold text-black transition hover:scale-[1.02] sm:px-7 sm:py-3.5 sm:text-sm">
                 Explore Gallery
                 <ArrowRight
                   size={18}
@@ -439,14 +604,14 @@ export default function ThirdSection() {
                 />
               </button>
 
-              <button className="rounded-full border border-white/14 bg-white/[0.03] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-xl transition hover:bg-white/[0.06]">
+              <button className="rounded-full border border-white/14 bg-white/[0.03] px-5 py-3 text-xs font-semibold text-white backdrop-blur-xl transition hover:bg-white/[0.06] sm:px-7 sm:py-3.5 sm:text-sm">
                 View Archive
               </button>
             </div>
 
             <div
               ref={chapterCardRef}
-              className="mt-14 max-w-[560px] rounded-[30px] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl"
+              className="mt-8 w-full rounded-[26px] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl sm:mt-10 sm:rounded-[30px] sm:p-6 md:max-w-[560px] lg:mt-14"
             >
               <div className="relative h-[2px] w-full overflow-hidden rounded-full bg-white/10">
                 <div
@@ -457,21 +622,21 @@ export default function ThirdSection() {
 
               <p
                 ref={chapterNoRef}
-                className="mt-6 text-[11px] uppercase tracking-[0.34em] text-[#d8aa70]"
+                className="mt-5 text-[10px] uppercase tracking-[0.28em] text-[#d8aa70] sm:mt-6 sm:text-[11px] sm:tracking-[0.34em]"
               >
                 01
               </p>
 
               <p
                 ref={chapterLabelRef}
-                className="mt-3 text-sm uppercase tracking-[0.22em] text-white/46"
+                className="mt-3 text-xs uppercase tracking-[0.18em] text-white/46 sm:text-sm sm:tracking-[0.22em]"
               >
                 Gallery Motion
               </p>
 
               <h3
                 ref={chapterTitleRef}
-                className="mt-3 text-2xl font-semibold tracking-[-0.04em]"
+                className="mt-3 text-xl font-semibold tracking-[-0.04em] sm:text-2xl"
               >
                 Not a hero object. A moving editorial wall.
               </h3>
@@ -485,112 +650,117 @@ export default function ThirdSection() {
             </div>
           </div>
 
-          <div className="relative z-10 flex items-center justify-center">
+          <div className="relative z-10">
+            <div className="hidden md:flex items-center justify-center">
+              <div
+                ref={galleryWrapRef}
+                className="relative h-[82vh] min-h-[700px] w-full max-w-[980px] overflow-hidden rounded-[42px] border border-white/10 bg-white/[0.03] p-5 shadow-[0_36px_140px_rgba(0,0,0,0.58)] backdrop-blur-xl"
+              >
+                <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.06),transparent_22%,transparent_72%,rgba(192,138,74,0.08))]" />
+
+                <div
+                  ref={bigWordDesktopRef}
+                  className="pointer-events-none absolute left-1/2 top-[6%] z-0 -translate-x-1/2 text-[110px] font-semibold uppercase tracking-[-0.08em] text-white/10 lg:text-[220px]"
+                >
+                  GALLERY
+                </div>
+
+                <div className="relative z-10 grid h-full grid-cols-3 gap-4 overflow-hidden rounded-[30px]">
+                  <LaneShell>
+                    <div
+                      ref={lane1Ref}
+                      className="absolute inset-x-0 top-0 flex flex-col gap-4 p-4 will-change-transform"
+                    >
+                      {laneOne.concat(laneOne, laneOne).map((item, idx) => (
+                        <GalleryCard key={`l1-${idx}`} {...item} compact />
+                      ))}
+                    </div>
+                  </LaneShell>
+
+                  <LaneShell>
+                    <div
+                      ref={lane2Ref}
+                      className="absolute inset-x-0 top-0 flex flex-col gap-4 p-4 will-change-transform"
+                    >
+                      {laneTwo.concat(laneTwo, laneTwo).map((item, idx) => (
+                        <GalleryCard
+                          key={`l2-${idx}`}
+                          {...item}
+                          featured={idx % 4 === 0}
+                        />
+                      ))}
+                    </div>
+                  </LaneShell>
+
+                  <LaneShell>
+                    <div
+                      ref={lane3Ref}
+                      className="absolute inset-x-0 top-0 flex flex-col gap-4 p-4 will-change-transform"
+                    >
+                      {laneThree.concat(laneThree, laneThree).map((item, idx) => (
+                        <GalleryCard key={`l3-${idx}`} {...item} compact />
+                      ))}
+                    </div>
+                  </LaneShell>
+                </div>
+
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-[110px] bg-[linear-gradient(to_bottom,rgba(5,5,5,0.92),rgba(5,5,5,0.56),transparent)]" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[110px] bg-[linear-gradient(to_top,rgba(5,5,5,0.92),rgba(5,5,5,0.56),transparent)]" />
+              </div>
+            </div>
+
             <div
-              ref={galleryWrapRef}
-              className="relative h-[82vh] min-h-[700px] w-full max-w-[980px] overflow-hidden rounded-[42px] border border-white/10 bg-white/[0.03] p-5 shadow-[0_36px_140px_rgba(0,0,0,0.58)] backdrop-blur-xl"
+              ref={mobileGalleryRef}
+              className="md:hidden relative mt-6 overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.03] p-3 shadow-[0_24px_90px_rgba(0,0,0,0.34)] backdrop-blur-xl"
             >
               <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.06),transparent_22%,transparent_72%,rgba(192,138,74,0.08))]" />
 
               <div
-                ref={bigWordRef}
-                className="pointer-events-none absolute left-1/2 top-[6%] z-0 -translate-x-1/2 text-[110px] font-semibold uppercase tracking-[-0.08em] text-white/10 lg:text-[220px]"
+                ref={bigWordMobileRef}
+                className="pointer-events-none absolute left-1/2 top-4 z-0 -translate-x-1/2 text-[58px] font-semibold uppercase tracking-[-0.08em] text-white/10"
               >
                 GALLERY
               </div>
 
-              <div className="relative z-10 grid h-full grid-cols-3 gap-4 overflow-hidden rounded-[30px]">
-                <LaneShell>
-                  <div
-                    ref={lane1Ref}
-                    className="absolute inset-x-0 top-0 flex flex-col gap-4 p-4 will-change-transform"
-                  >
-                    {laneOne.concat(laneOne, laneOne).map((item, idx) => (
-                      <GalleryCard key={`l1-${idx}`} {...item} compact />
-                    ))}
-                  </div>
-                </LaneShell>
-
-                <LaneShell>
-                  <div
-                    ref={lane2Ref}
-                    className="absolute inset-x-0 top-0 flex flex-col gap-4 p-4 will-change-transform"
-                  >
-                    {laneTwo.concat(laneTwo, laneTwo).map((item, idx) => (
-                      <GalleryCard
-                        key={`l2-${idx}`}
-                        {...item}
-                        featured={idx % 4 === 0}
-                      />
-                    ))}
-                  </div>
-                </LaneShell>
-
-                <LaneShell>
-                  <div
-                    ref={lane3Ref}
-                    className="absolute inset-x-0 top-0 flex flex-col gap-4 p-4 will-change-transform"
-                  >
-                    {laneThree.concat(laneThree, laneThree).map((item, idx) => (
-                      <GalleryCard key={`l3-${idx}`} {...item} compact />
-                    ))}
-                  </div>
-                </LaneShell>
+              <div className="relative z-10 grid grid-cols-2 gap-3 pt-16">
+                <GalleryCard
+                  refProp={mobileCard1Ref}
+                  {...laneOne[0]}
+                  compact
+                />
+                <GalleryCard
+                  refProp={mobileCard2Ref}
+                  {...laneTwo[0]}
+                  compact
+                  featured
+                />
+                <GalleryCard
+                  refProp={mobileCard3Ref}
+                  {...laneThree[0]}
+                  compact
+                />
+                <GalleryCard
+                  refProp={mobileCard4Ref}
+                  {...laneOne[1]}
+                  compact
+                />
+                <GalleryCard
+                  refProp={mobileCard5Ref}
+                  {...laneTwo[1]}
+                  compact
+                  featured
+                />
+                <GalleryCard
+                  refProp={mobileCard6Ref}
+                  {...laneThree[1]}
+                  compact
+                />
               </div>
-
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-[110px] bg-[linear-gradient(to_bottom,rgba(5,5,5,0.92),rgba(5,5,5,0.56),transparent)]" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[110px] bg-[linear-gradient(to_top,rgba(5,5,5,0.92),rgba(5,5,5,0.56),transparent)]" />
             </div>
           </div>
         </div>
       </div>
     </section>
-
-    <section className="block md:hidden">
-      <div className="overflow-hidden rounded-[34px] border border-white/10 bg-white/[0.03] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-        <p className="inline-flex rounded-full border border-[#d8aa70]/16 bg-[#d8aa70]/8 px-3 py-1.5 text-[10px] uppercase tracking-[0.28em] text-[#d8aa70]">
-          Editorial Flow
-        </p>
-
-        <h2 className="mt-4 text-2xl font-semibold leading-[0.95] tracking-[-0.05em] text-white">
-          A premium library needs
-          <span className="block text-[#d8aa70]">clear visual rhythm.</span>
-        </h2>
-
-        <p className="mt-4 text-sm leading-7 text-white/60">
-          Strong typography, calm motion, layered surfaces, and proper spacing
-          make the mobile experience feel like an app product.
-        </p>
-
-        <div className="mt-5 space-y-3">
-          <div className="rounded-[24px] border border-white/10 bg-white/[0.04] p-4">
-            <p className="text-[10px] uppercase tracking-[0.28em] text-[#f1d8ac]">
-              Chapter 01
-            </p>
-            <h3 className="mt-3 text-lg font-semibold text-white">
-              Editorial Flow
-            </h3>
-            <p className="mt-2 text-sm leading-7 text-white/55">
-              Everything should feel connected and premium.
-            </p>
-          </div>
-
-          <div className="rounded-[24px] border border-white/10 bg-white/[0.04] p-4">
-            <p className="text-[10px] uppercase tracking-[0.28em] text-[#f1d8ac]">
-              Chapter 02
-            </p>
-            <h3 className="mt-3 text-lg font-semibold text-white">
-              Reader Mood
-            </h3>
-            <p className="mt-2 text-sm leading-7 text-white/55">
-              Quiet, rich, and intentional.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  </>
-
   );
 }
 
@@ -603,6 +773,7 @@ function LaneShell({ children }) {
 }
 
 function GalleryCard({
+  refProp,
   title,
   subtitle,
   tone = "amber",
@@ -610,41 +781,38 @@ function GalleryCard({
   featured = false,
 }) {
   const toneClasses = {
-    amber:
-      "from-[#1a130d] via-[#46301e] to-[#b68147]",
-    espresso:
-      "from-[#0f0d0c] via-[#251b16] to-[#6f4e36]",
-    charcoal:
-      "from-[#0a0a0a] via-[#1a1a1a] to-[#363636]",
-    midnight:
-      "from-[#09090d] via-[#161626] to-[#34345a]",
-    copper:
-      "from-[#120d0c] via-[#3a2418] to-[#af6e3c]",
+    amber: "from-[#1a130d] via-[#46301e] to-[#b68147]",
+    espresso: "from-[#0f0d0c] via-[#251b16] to-[#6f4e36]",
+    charcoal: "from-[#0a0a0a] via-[#1a1a1a] to-[#363636]",
+    midnight: "from-[#09090d] via-[#161626] to-[#34345a]",
+    copper: "from-[#120d0c] via-[#3a2418] to-[#af6e3c]",
   };
 
   return (
     <div
+      ref={refProp}
       className={`relative overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-br ${
         toneClasses[tone] || toneClasses.amber
       } p-[10px] shadow-[0_20px_60px_rgba(0,0,0,0.35)] ${
         compact ? "min-h-[180px]" : "min-h-[220px]"
       } ${featured ? "ring-1 ring-[#d8aa70]/18" : ""}`}
+      style={refProp ? { willChange: "transform, opacity" } : undefined}
     >
       <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.1),transparent_30%,transparent_70%,rgba(0,0,0,0.18))]" />
       <div className="absolute left-[8%] top-[8%] h-[30%] w-[56%] rotate-[14deg] bg-white/10 blur-[26px]" />
       <div className="absolute inset-[14px] rounded-[18px] border border-white/10" />
 
-      <div className="relative z-10 flex h-full flex-col justify-between rounded-[18px] p-5">
+      <div className="relative z-10 flex h-full flex-col justify-between rounded-[18px] p-4 sm:p-5">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.34em] text-[#f1d8ac]">
+          <p className="text-[9px] uppercase tracking-[0.28em] text-[#f1d8ac] sm:text-[10px] sm:tracking-[0.34em]">
             {subtitle}
           </p>
-          <h3 className="mt-4 text-2xl font-semibold leading-[0.96] tracking-[-0.05em] text-white">
+          <h3 className="mt-3 text-lg font-semibold leading-[0.96] tracking-[-0.05em] text-white sm:mt-4 sm:text-2xl">
             {title}
           </h3>
         </div>
 
-        <div className="mt-6 inline-flex w-fit rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-[10px] uppercase tracking-[0.32em] text-white/58">
+        <div className="mt-5 inline-flex w-fit rounded-full border border-white/12 bg-white/[0.05] px-3 py-2 text-[9px] uppercase tracking-[0.24em] text-white/58 sm:px-4 sm:text-[10px] sm:tracking-[0.32em]">
           Premium
         </div>
       </div>

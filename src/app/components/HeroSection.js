@@ -50,31 +50,41 @@ export default function HeroSection() {
   const chapter2Ref = useRef(null);
   const chapter3Ref = useRef(null);
 
+  // mobile refs
+  const mobileSectionRef = useRef(null);
+  const mobileBadgeRef = useRef(null);
+  const mobileTitleRef = useRef(null);
+  const mobileParaRef = useRef(null);
+  const mobileBtnsRef = useRef(null);
+  const mobileBookWrapRef = useRef(null);
+  const mobileStoryRef = useRef(null);
+
   useEffect(() => {
     const lenis = new Lenis({
       lerp: 0.075,
       smoothWheel: true,
     });
 
-    let rafId;
-    const raf = (time) => {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
+    const update = (time) => {
+      lenis.raf(time * 1000);
     };
-    rafId = requestAnimationFrame(raf);
 
     lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      lenis.off("scroll", ScrollTrigger.update);
+      gsap.ticker.remove(update);
       lenis.destroy();
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, []);
 
   useGSAP(
     () => {
       const ctx = gsap.context(() => {
+        // desktop initial states
         gsap.set(
           [
             introRef.current,
@@ -208,7 +218,6 @@ export default function HeroSection() {
         });
 
         tl
-          // settle
           .to(
             cameraRef.current,
             {
@@ -290,10 +299,14 @@ export default function HeroSection() {
             },
             0
           )
-
-          // text fade
           .to(
-            [introRef.current, titleRef.current, paraRef.current, btnsRef.current, hintRef.current],
+            [
+              introRef.current,
+              titleRef.current,
+              paraRef.current,
+              btnsRef.current,
+              hintRef.current,
+            ],
             {
               opacity: 0,
               y: -70,
@@ -303,8 +316,6 @@ export default function HeroSection() {
             },
             1.05
           )
-
-          // open phase 1
           .to(
             leftCoverRef.current,
             {
@@ -416,8 +427,6 @@ export default function HeroSection() {
             },
             1.95
           )
-
-          // open phase 2
           .to(
             leftCoverRef.current,
             {
@@ -546,8 +555,6 @@ export default function HeroSection() {
             },
             3.05
           )
-
-          // page flip
           .to(
             pageFlipRef.current,
             {
@@ -624,8 +631,6 @@ export default function HeroSection() {
             },
             4.22
           )
-
-          // final premium presentation
           .to(
             cameraRef.current,
             {
@@ -666,6 +671,102 @@ export default function HeroSection() {
             },
             4.72
           );
+
+        // mobile initial states
+        gsap.set(
+          [
+            mobileBadgeRef.current,
+            mobileTitleRef.current,
+            mobileParaRef.current,
+            mobileBtnsRef.current,
+            mobileStoryRef.current,
+          ],
+          {
+            opacity: 0,
+            y: 28,
+          }
+        );
+
+        gsap.set(mobileBookWrapRef.current, {
+          opacity: 0,
+          y: 36,
+          scale: 0.92,
+          rotateX: 10,
+        });
+
+        const mobileTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: mobileSectionRef.current,
+            start: "top 85%",
+            once: true,
+          },
+          defaults: {
+            ease: "power3.out",
+          },
+        });
+
+        mobileTl
+          .to(mobileBadgeRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+          })
+          .to(
+            mobileTitleRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+            },
+            "-=0.2"
+          )
+          .to(
+            mobileParaRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+            },
+            "-=0.35"
+          )
+          .to(
+            mobileBtnsRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.55,
+            },
+            "-=0.35"
+          )
+          .to(
+            mobileBookWrapRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              rotateX: 0,
+              duration: 0.8,
+            },
+            "-=0.2"
+          )
+          .to(
+            mobileStoryRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.55,
+            },
+            "-=0.3"
+          );
+
+        gsap.to(mobileBookWrapRef.current, {
+          y: "-=10",
+          duration: 2.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 1.2,
+        });
       }, rootRef);
 
       return () => ctx.revert();
@@ -674,12 +775,12 @@ export default function HeroSection() {
   );
 
   return (
-
-
-
-
     <>
-      <section className="relative hidden overflow-hidden bg-[#050505] text-[#f7f2ea] md:block">
+      {/* desktop */}
+      <section
+        ref={rootRef}
+        className="relative hidden overflow-hidden bg-[#050505] text-[#f7f2ea] md:block"
+      >
         <div ref={heroRef} className="relative min-h-screen overflow-hidden">
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_28%)]" />
@@ -739,7 +840,10 @@ export default function HeroSection() {
                   and a cinematic open-book reveal built to feel physical.
                 </p>
 
-                <div ref={btnsRef} className="mt-10 flex flex-col gap-4 sm:flex-row">
+                <div
+                  ref={btnsRef}
+                  className="mt-10 flex flex-col gap-4 sm:flex-row"
+                >
                   <Link
                     href="/books"
                     className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#f7f2ea] px-7 py-3.5 text-sm font-semibold text-black transition hover:scale-[1.02]"
@@ -796,7 +900,6 @@ export default function HeroSection() {
                 className="relative h-[840px] w-full max-w-[940px]"
                 style={{ transformStyle: "preserve-3d" }}
               >
-                {/* floor / stage shadow */}
                 <div
                   ref={floorShadowRef}
                   className="absolute left-1/2 top-[71%] h-[170px] w-[690px] -translate-x-1/2 rounded-full bg-black/70 blur-[54px] opacity-90"
@@ -820,7 +923,6 @@ export default function HeroSection() {
                     className="absolute left-1/2 top-[54%] h-[570px] w-[840px] -translate-x-1/2 -translate-y-1/2"
                     style={{ transformStyle: "preserve-3d" }}
                   >
-                    {/* spine */}
                     <div
                       ref={spineRef}
                       className="absolute left-1/2 top-1/2 z-40 h-[548px] w-[46px] -translate-x-1/2 -translate-y-1/2 rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,#7b5933_0%,#2b1c12_42%,#92683e_100%)] shadow-[0_40px_140px_rgba(0,0,0,0.62)]"
@@ -832,7 +934,6 @@ export default function HeroSection() {
                       <div className="absolute inset-y-[8%] right-[8px] w-[2px] rounded-full bg-white/8 blur-[2px]" />
                     </div>
 
-                    {/* core */}
                     <div
                       className="absolute left-1/2 top-1/2 z-20 h-[510px] w-[710px] -translate-x-1/2 -translate-y-1/2"
                       style={{ transformStyle: "preserve-3d" }}
@@ -950,60 +1051,180 @@ export default function HeroSection() {
         </div>
       </section>
 
-      <section className="relative block md:hidden">
-        <div className="overflow-hidden rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,#0d0d0d_0%,#111111_100%)] p-5 shadow-[0_20px_70px_rgba(0,0,0,0.45)]">
-          <div className="mb-4 inline-flex rounded-full border border-[#d8aa70]/20 bg-[#d8aa70]/8 px-3 py-1.5 text-[10px] uppercase tracking-[0.28em] text-[#d8aa70]">
-            Premium Books App
+      {/* mobile */}
+      <section
+        ref={mobileSectionRef}
+        className="relative block md:hidden"
+      >
+        <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[#050505] px-4 pb-5 pt-5 shadow-[0_20px_70px_rgba(0,0,0,0.45)]">
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_30%)]" />
+            <div className="absolute left-1/2 top-[28%] h-[260px] w-[260px] -translate-x-1/2 rounded-full bg-[#c18a48]/20 blur-[70px]" />
+            <div className="absolute left-1/2 top-[32%] h-[180px] w-[120px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(255,244,220,0.32)_0%,rgba(255,244,220,0.10)_45%,transparent_75%)] blur-[24px]" />
+            <div
+              className="absolute inset-0 opacity-40"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 18% 24%, rgba(255,255,255,0.08) 1px, transparent 1.6px), radial-gradient(circle at 72% 46%, rgba(255,255,255,0.06) 1px, transparent 1.6px), radial-gradient(circle at 40% 78%, rgba(255,255,255,0.05) 1px, transparent 1.6px)",
+                backgroundSize: "220px 220px, 260px 260px, 240px 240px",
+              }}
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.08),rgba(0,0,0,0.28),rgba(0,0,0,0.78))]" />
           </div>
 
-          <h1 className="text-3xl font-semibold leading-[0.95] tracking-[-0.06em] text-white">
-            Books presented
-            <span className="block text-[#d8aa70]">like a luxury app.</span>
-          </h1>
-
-          <p className="mt-4 text-sm leading-7 text-white/60">
-            Smooth, premium, and focused. On mobile the experience should feel
-            like a collector app, not a stretched desktop website.
-          </p>
-
-          <div className="mt-6 flex gap-3">
-            <Link
-              href="/books"
-              className="inline-flex items-center justify-center rounded-full bg-[#f7f2ea] px-5 py-3 text-sm font-semibold text-black"
+          <div className="relative z-10">
+            <div
+              ref={mobileBadgeRef}
+              className="inline-flex rounded-full border border-[#d8aa70]/20 bg-[#d8aa70]/8 px-3 py-1.5 text-[10px] uppercase tracking-[0.28em] text-[#d8aa70]"
             >
-              Explore
-            </Link>
-            <Link
-              href="/collection"
-              className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white"
-            >
-              Collection
-            </Link>
-          </div>
+              Cinematic Books • Premium Edition
+            </div>
 
-          <div className="mt-6 rounded-[28px] border border-white/10 bg-white/[0.03] p-3">
-            <div className="rounded-[24px] bg-[linear-gradient(160deg,#120f0d_0%,#2b2018_22%,#5c3f26_58%,#bf8a4a_100%)] p-4 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
-              <div className="rounded-[20px] border border-white/10 p-4">
-                <p className="text-[10px] uppercase tracking-[0.32em] text-[#f1d8ac]">
-                  Collector Edition
-                </p>
-                <h3 className="mt-4 text-2xl font-semibold leading-[0.95] tracking-[-0.05em] text-white">
-                  Velvet Stories
-                </h3>
-                <div className="mt-6 flex items-center justify-between">
-                  <span className="rounded-full border border-white/12 bg-white/[0.05] px-3 py-1.5 text-[10px] uppercase tracking-[0.28em] text-white/65">
-                    Premium Bound
-                  </span>
-                  <span className="text-sm font-medium text-white/70">New Drop</span>
+            <h1
+              ref={mobileTitleRef}
+              className="mt-4 text-[2.2rem] font-semibold leading-[0.92] tracking-[-0.06em] text-[#f7f2ea]"
+            >
+              Open a story
+              <span className="block text-[#d8aa70]">like cinema begins.</span>
+            </h1>
+
+            <p
+              ref={mobileParaRef}
+              className="mt-4 max-w-[92%] text-[14px] leading-7 text-white/62"
+            >
+              Real page depth, collector-grade covers, dramatic studio light,
+              and a cinematic open-book reveal built to feel physical.
+            </p>
+
+            <div ref={mobileBtnsRef} className="mt-5 flex gap-3">
+              <Link
+                href="/books"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#f7f2ea] px-5 py-3 text-sm font-semibold text-black shadow-[0_12px_30px_rgba(255,255,255,0.08)]"
+              >
+                Explore Books
+                <ArrowRight size={16} />
+              </Link>
+
+              <Link
+                href="/collection"
+                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white backdrop-blur-xl"
+              >
+                Collection
+              </Link>
+            </div>
+
+            <div
+              ref={mobileBookWrapRef}
+              className="relative mt-8 flex justify-center"
+            >
+              <div className="relative h-[320px] w-full max-w-[360px]">
+                <div className="absolute bottom-[26px] left-1/2 h-[50px] w-[250px] -translate-x-1/2 rounded-full bg-black/70 blur-[24px]" />
+                <div className="absolute bottom-[34px] left-1/2 h-[36px] w-[190px] -translate-x-1/2 rounded-full bg-[#7e5328]/20 blur-[18px]" />
+
+                <div className="absolute left-1/2 top-[52%] h-[220px] w-[320px] -translate-x-1/2 -translate-y-1/2 [perspective:1600px]">
+                  <div
+                    className="relative h-full w-full"
+                    style={{
+                      transform:
+                        "rotateX(18deg) rotateY(-10deg) rotateZ(-4deg)",
+                      transformStyle: "preserve-3d",
+                    }}
+                  >
+                    <div className="absolute left-1/2 top-1/2 z-30 h-[210px] w-[20px] -translate-x-1/2 -translate-y-1/2 rounded-[12px] border border-white/10 bg-[linear-gradient(180deg,#7b5933_0%,#2b1c12_42%,#92683e_100%)] shadow-[0_20px_60px_rgba(0,0,0,0.62)]" />
+
+                    <div
+                      className="absolute left-1/2 top-1/2 z-10 h-[186px] w-[118px] -translate-y-1/2 rounded-l-[18px] rounded-r-[8px] border border-[#f2e6d2]/38 bg-[linear-gradient(180deg,#fbf4ea_0%,#f2e5d1_60%,#e7d7bf_100%)] shadow-[inset_0_0_18px_rgba(255,255,255,0.34),0_12px_26px_rgba(0,0,0,0.08)]"
+                      style={{
+                        transform:
+                          "translateX(-100%) translateZ(8px) rotateY(-28deg) rotateZ(-1deg)",
+                        transformOrigin: "right center",
+                      }}
+                    >
+                      <div className="absolute inset-0 rounded-l-[18px] rounded-r-[8px] bg-[linear-gradient(90deg,rgba(0,0,0,0.14),transparent_18%,transparent_82%,rgba(0,0,0,0.05))]" />
+                    </div>
+
+                    <div
+                      className="absolute left-1/2 top-1/2 z-10 h-[186px] w-[118px] -translate-y-1/2 rounded-r-[18px] rounded-l-[8px] border border-[#f2e6d2]/38 bg-[linear-gradient(180deg,#fbf4ea_0%,#f2e5d1_60%,#e7d7bf_100%)] shadow-[inset_0_0_18px_rgba(255,255,255,0.34),0_12px_26px_rgba(0,0,0,0.08)]"
+                      style={{
+                        transform:
+                          "translateZ(8px) rotateY(24deg) rotateZ(1deg)",
+                        transformOrigin: "left center",
+                      }}
+                    >
+                      <div className="absolute inset-0 rounded-r-[18px] rounded-l-[8px] bg-[linear-gradient(270deg,rgba(0,0,0,0.14),transparent_18%,transparent_82%,rgba(0,0,0,0.05))]" />
+                    </div>
+
+                    <div
+                      className="absolute left-1/2 top-1/2 z-20 h-[220px] w-[142px] -translate-y-1/2 rounded-l-[22px] rounded-r-[10px] border border-white/10 bg-[#0f0f0f] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.72)]"
+                      style={{
+                        transform:
+                          "translateX(-100%) translateZ(14px) rotateY(-48deg)",
+                        transformOrigin: "right center",
+                      }}
+                    >
+                      <div className="relative h-full w-full overflow-hidden rounded-l-[18px] rounded-r-[8px] bg-[linear-gradient(160deg,#111111_0%,#201814_32%,#47311f_65%,#ba8448_100%)] p-4">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.16),transparent_30%),linear-gradient(to_bottom,transparent,rgba(0,0,0,0.26))]" />
+                        <div className="relative z-10">
+                          <p className="text-[8px] uppercase tracking-[0.25em] text-[#f1d8ac]">
+                            Signature
+                          </p>
+                          <h3 className="mt-3 text-[22px] font-semibold leading-[0.95] tracking-[-0.05em] text-white">
+                            Midnight
+                            <span className="block text-[#f1d8ac]">Echoes</span>
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      className="absolute left-1/2 top-1/2 z-20 h-[220px] w-[142px] -translate-y-1/2 rounded-r-[22px] rounded-l-[10px] border border-white/10 bg-[#0f0f0f] p-2 shadow-[0_24px_70px_rgba(0,0,0,0.72)]"
+                      style={{
+                        transform: "translateZ(14px) rotateY(44deg)",
+                        transformOrigin: "left center",
+                      }}
+                    >
+                      <div className="relative flex h-full items-center justify-center overflow-hidden rounded-r-[18px] rounded-l-[8px] bg-[linear-gradient(160deg,#111111_0%,#201814_32%,#47311f_65%,#ba8448_100%)] p-4 text-center">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.16),transparent_30%),linear-gradient(to_bottom,transparent,rgba(0,0,0,0.26))]" />
+                        <div className="relative z-10">
+                          <p className="text-[8px] uppercase tracking-[0.25em] text-[#f1d8ac]">
+                            Collector
+                          </p>
+                          <h3 className="mt-3 text-[22px] font-semibold leading-[0.95] tracking-[-0.05em] text-white">
+                            A Story
+                            <span className="block text-[#f1d8ac]">
+                              Unfolding
+                            </span>
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pointer-events-none absolute left-1/2 top-1/2 z-40 h-[140px] w-[180px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,248,232,0.42)_0%,rgba(255,248,232,0.12)_40%,transparent_75%)] blur-[20px]" />
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <div
+              ref={mobileStoryRef}
+              className="mt-4 rounded-[24px] border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl"
+            >
+              <p className="text-[10px] uppercase tracking-[0.3em] text-[#d8aa70]">
+                Chapter One
+              </p>
+              <h3 className="mt-2 text-[22px] font-semibold leading-[1.05] tracking-[-0.04em] text-white">
+                The covers separate. The object feels real.
+              </h3>
+              <p className="mt-3 text-[13px] leading-6 text-white/60">
+                The book stops reading like a UI shape and starts feeling like a
+                physical collector’s edition.
+              </p>
             </div>
           </div>
         </div>
       </section>
     </>
   );
-
 }
 
 function StoryBlock({ refProp, label, title, text }) {
@@ -1037,10 +1258,11 @@ function PageHalf({
   return (
     <div
       ref={refProp}
-      className={`absolute left-1/2 top-1/2 h-[486px] ${widthClass} -translate-y-1/2 border border-[#f2e6d2]/38 ${tone} ${zClass} ${isLeft
+      className={`absolute left-1/2 top-1/2 h-[486px] ${widthClass} -translate-y-1/2 border border-[#f2e6d2]/38 ${tone} ${zClass} ${
+        isLeft
           ? "rounded-l-[32px] rounded-r-[10px]"
           : "rounded-r-[32px] rounded-l-[10px]"
-        } shadow-[inset_0_0_30px_rgba(255,255,255,0.34),0_22px_42px_rgba(0,0,0,0.08)]`}
+      } shadow-[inset_0_0_30px_rgba(255,255,255,0.34),0_22px_42px_rgba(0,0,0,0.08)]`}
       style={{
         ...style,
         transformStyle: "preserve-3d",
@@ -1048,46 +1270,58 @@ function PageHalf({
       }}
     >
       <div
-        className={`absolute inset-0 ${isLeft
+        className={`absolute inset-0 ${
+          isLeft
             ? "bg-[linear-gradient(90deg,rgba(0,0,0,0.15),transparent_20%,transparent_82%,rgba(0,0,0,0.06))]"
             : "bg-[linear-gradient(270deg,rgba(0,0,0,0.15),transparent_20%,transparent_82%,rgba(0,0,0,0.06))]"
-          } ${isLeft ? "rounded-l-[32px] rounded-r-[10px]" : "rounded-r-[32px] rounded-l-[10px]"}`}
+        } ${
+          isLeft
+            ? "rounded-l-[32px] rounded-r-[10px]"
+            : "rounded-r-[32px] rounded-l-[10px]"
+        }`}
       />
 
       <div
-        className={`absolute top-0 ${isLeft ? "left-0" : "right-0"
-          } h-full w-[10px] bg-[linear-gradient(to_bottom,#fff6ea,#eadbc5,#d8c3a5)] opacity-80`}
+        className={`absolute top-0 ${
+          isLeft ? "left-0" : "right-0"
+        } h-full w-[10px] bg-[linear-gradient(to_bottom,#fff6ea,#eadbc5,#d8c3a5)] opacity-80`}
       />
 
       <div className="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(to_bottom,rgba(90,70,45,0.08)_0px,rgba(90,70,45,0.08)_1px,transparent_2px,transparent_6px)]" />
 
       <div
-        className={`absolute inset-y-[7%] ${isLeft ? "right-[15px]" : "left-[15px]"
-          } w-[1px] bg-[#8d7d62]/20`}
+        className={`absolute inset-y-[7%] ${
+          isLeft ? "right-[15px]" : "left-[15px]"
+        } w-[1px] bg-[#8d7d62]/20`}
       />
 
       <div
-        className={`absolute inset-y-[8%] ${isLeft ? "left-[10px]" : "right-[10px]"
-          } w-[8px] rounded-full bg-black/10 blur-[6px]`}
+        className={`absolute inset-y-[8%] ${
+          isLeft ? "left-[10px]" : "right-[10px]"
+        } w-[8px] rounded-full bg-black/10 blur-[6px]`}
       />
 
       {lines && (
         <>
           <div
-            className={`absolute ${isLeft ? "left-[8%]" : "right-[8%]"
-              } top-[13%] h-[2px] w-[54%] bg-[#7c6951]/16`}
+            className={`absolute ${
+              isLeft ? "left-[8%]" : "right-[8%]"
+            } top-[13%] h-[2px] w-[54%] bg-[#7c6951]/16`}
           />
           <div
-            className={`absolute ${isLeft ? "left-[8%]" : "right-[8%]"
-              } top-[19%] h-[2px] w-[66%] bg-[#7c6951]/14`}
+            className={`absolute ${
+              isLeft ? "left-[8%]" : "right-[8%]"
+            } top-[19%] h-[2px] w-[66%] bg-[#7c6951]/14`}
           />
           <div
-            className={`absolute ${isLeft ? "left-[8%]" : "right-[8%]"
-              } top-[25%] h-[2px] w-[58%] bg-[#7c6951]/14`}
+            className={`absolute ${
+              isLeft ? "left-[8%]" : "right-[8%]"
+            } top-[25%] h-[2px] w-[58%] bg-[#7c6951]/14`}
           />
           <div
-            className={`absolute ${isLeft ? "left-[8%]" : "right-[8%]"
-              } top-[34%] h-[165px] w-[84%] rounded-[18px] border border-[#7c6951]/10 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.05),transparent_55%)]`}
+            className={`absolute ${
+              isLeft ? "left-[8%]" : "right-[8%]"
+            } top-[34%] h-[165px] w-[84%] rounded-[18px] border border-[#7c6951]/10 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.05),transparent_55%)]`}
           />
         </>
       )}
@@ -1101,10 +1335,11 @@ function CoverHalf({ refProp, side, titleTop, titleMain, titleAccent, footer }) 
   return (
     <div
       ref={refProp}
-      className={`absolute left-1/2 top-1/2 z-50 h-[570px] w-[378px] -translate-y-1/2 border border-white/10 bg-[#0f0f0f] p-3 shadow-[0_40px_160px_rgba(0,0,0,0.76)] ${isLeft
+      className={`absolute left-1/2 top-1/2 z-50 h-[570px] w-[378px] -translate-y-1/2 border border-white/10 bg-[#0f0f0f] p-3 shadow-[0_40px_160px_rgba(0,0,0,0.76)] ${
+        isLeft
           ? "rounded-l-[42px] rounded-r-[18px]"
           : "rounded-r-[42px] rounded-l-[18px]"
-        }`}
+      }`}
       style={{
         transform: isLeft
           ? "translateX(-100%) translateZ(30px)"
@@ -1114,10 +1349,11 @@ function CoverHalf({ refProp, side, titleTop, titleMain, titleAccent, footer }) 
       }}
     >
       <div
-        className={`relative h-full w-full overflow-hidden bg-[linear-gradient(160deg,#111111_0%,#201814_32%,#47311f_65%,#ba8448_100%)] p-9 ${isLeft
+        className={`relative h-full w-full overflow-hidden bg-[linear-gradient(160deg,#111111_0%,#201814_32%,#47311f_65%,#ba8448_100%)] p-9 ${
+          isLeft
             ? "rounded-l-[36px] rounded-r-[15px]"
             : "rounded-r-[36px] rounded-l-[15px]"
-          }`}
+        }`}
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_30%),linear-gradient(to_bottom,transparent,rgba(0,0,0,0.28))]" />
         <div className="absolute inset-0 opacity-[0.07] mix-blend-soft-light bg-[repeating-linear-gradient(135deg,rgba(255,255,255,0.18)_0px,rgba(255,255,255,0.18)_1px,transparent_2px,transparent_6px)]" />

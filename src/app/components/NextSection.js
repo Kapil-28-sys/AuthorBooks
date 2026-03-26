@@ -32,6 +32,28 @@ const chapters = [
   },
 ];
 
+const mobileCards = [
+  {
+    eyebrow: "Collector Notes",
+    title: "Bound for people who notice detail.",
+    body: "Rich texture, balanced spacing, restrained highlights, and editorial composition that feels expensive.",
+    stat: "12 Editions",
+  },
+  {
+    eyebrow: "Reader Atmosphere",
+    title: "Mood before motion.",
+    body: "Smooth reveals, warm gold depth, and visual silence that lets the section breathe like luxury branding.",
+    stat: "Premium Flow",
+    featured: true,
+  },
+  {
+    eyebrow: "Library Identity",
+    title: "A collection with one visual language.",
+    body: "The panels feel related, the typography feels intentional, and the transitions feel directed.",
+    stat: "Curated World",
+  },
+];
+
 export default function NextSection() {
   const rootRef = useRef(null);
   const sectionRef = useRef(null);
@@ -58,8 +80,15 @@ export default function NextSection() {
   const panel2Ref = useRef(null);
   const panel3Ref = useRef(null);
 
+  const mobileStageRef = useRef(null);
+  const mobileCard1Ref = useRef(null);
+  const mobileCard2Ref = useRef(null);
+  const mobileCard3Ref = useRef(null);
+
   useGSAP(
     () => {
+      const isMobile = window.innerWidth < 768;
+
       const ctx = gsap.context(() => {
         const setChapter = (index) => {
           const item = chapters[index];
@@ -80,8 +109,137 @@ export default function NextSection() {
             actionsRef.current,
             chapterCardRef.current,
           ],
-          { opacity: 0, y: 40 }
+          { opacity: 0, y: isMobile ? 24 : 40 }
         );
+
+        gsap.set(progressRef.current, {
+          scaleX: 0,
+          transformOrigin: "left center",
+        });
+
+        if (isMobile) {
+          gsap.set(bigWordRef.current, {
+            opacity: 0,
+            y: 20,
+            scale: 0.98,
+          });
+
+          gsap.set(mobileStageRef.current, {
+            opacity: 0,
+            y: 20,
+          });
+
+          gsap.set(
+            [mobileCard1Ref.current, mobileCard2Ref.current, mobileCard3Ref.current],
+            {
+              opacity: 0,
+              y: 44,
+              scale: 0.96,
+              rotateX: 8,
+            }
+          );
+
+          const mobileTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 82%",
+              end: "bottom 30%",
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          mobileTl
+            .to(
+              [badgeRef.current, titleRef.current, descRef.current, actionsRef.current],
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.08,
+                ease: "none",
+              },
+              0
+            )
+            .to(
+              chapterCardRef.current,
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.45,
+                ease: "none",
+              },
+              0.08
+            )
+            .to(
+              bigWordRef.current,
+              {
+                opacity: 0.08,
+                y: 0,
+                scale: 1,
+                duration: 0.6,
+                ease: "none",
+              },
+              0.1
+            )
+            .to(
+              mobileStageRef.current,
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                ease: "none",
+              },
+              0.12
+            )
+            .to(
+              progressRef.current,
+              {
+                scaleX: 1,
+                duration: 0.8,
+                ease: "none",
+              },
+              0.16
+            )
+            .to(
+              mobileCard1Ref.current,
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                rotateX: 0,
+                duration: 0.5,
+                ease: "none",
+              },
+              0.22
+            )
+            .to(
+              mobileCard2Ref.current,
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                rotateX: 0,
+                duration: 0.5,
+                ease: "none",
+              },
+              0.38
+            )
+            .to(
+              mobileCard3Ref.current,
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                rotateX: 0,
+                duration: 0.5,
+                ease: "none",
+              },
+              0.54
+            );
+
+          return;
+        }
 
         gsap.set(bigWordRef.current, {
           opacity: 0.08,
@@ -99,10 +257,6 @@ export default function NextSection() {
 
         gsap.set(glowRef.current, { opacity: 0.24, scale: 0.82 });
         gsap.set(shadowRef.current, { opacity: 0.48, scale: 0.86 });
-        gsap.set(progressRef.current, {
-          scaleX: 0,
-          transformOrigin: "left center",
-        });
 
         gsap.set(panel1Ref.current, {
           y: 120,
@@ -433,32 +587,31 @@ export default function NextSection() {
   );
 
   return (
-     
-
-     
-  <>
-    <section className="hidden md:block">
-       <div ref={sectionRef} className="relative min-h-screen overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
+    <section
+      ref={rootRef}
+      className="relative overflow-hidden bg-transparent text-white"
+    >
+      <div ref={sectionRef} className="relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.04),transparent_30%)]" />
           <div
             ref={glowRef}
-            className="absolute left-1/2 top-1/2 h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c69052]/10 blur-[160px]"
+            className="absolute left-1/2 top-[42%] h-[700px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c69052]/10 blur-[160px]"
           />
         </div>
 
-        <div className="relative z-10 mx-auto grid min-h-screen max-w-7xl items-center gap-12 px-6 py-24 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div>
+        <div className="relative z-10 mx-auto grid min-h-[100svh] max-w-7xl items-center gap-10 px-4 py-14 sm:px-5 sm:py-16 md:px-6 md:py-20 lg:min-h-screen lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:px-8 lg:py-24">
+          <div className="order-1">
             <p
               ref={badgeRef}
-              className="inline-flex items-center rounded-full border border-[#d8aa70]/16 bg-[#d8aa70]/8 px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-[#d8aa70]"
+              className="inline-flex items-center rounded-full border border-[#d8aa70]/16 bg-[#d8aa70]/8 px-3 py-2 text-[10px] uppercase tracking-[0.28em] text-[#d8aa70] sm:px-4 sm:text-[11px] sm:tracking-[0.34em]"
             >
               Editorial Motion
             </p>
 
             <h2
               ref={titleRef}
-              className="mt-5 max-w-[650px] text-4xl font-semibold leading-[0.92] tracking-[-0.06em] sm:text-5xl lg:text-7xl"
+              className="mt-4 max-w-[650px] text-3xl font-semibold leading-[0.92] tracking-[-0.06em] sm:mt-5 sm:text-4xl md:text-5xl lg:text-7xl"
             >
               Different from the hero.
               <span className="block text-[#d8aa70]">
@@ -468,15 +621,18 @@ export default function NextSection() {
 
             <p
               ref={descRef}
-              className="mt-7 max-w-xl text-lg leading-8 text-white/60"
+              className="mt-5 max-w-xl text-sm leading-7 text-white/60 sm:mt-6 sm:text-base sm:leading-8 lg:mt-7 lg:text-lg"
             >
               Hero me book-object reveal hai. Yahan editorial showcase hai.
               Same quality, but different motion language — isi se homepage rich
               lagta hai.
             </p>
 
-            <div ref={actionsRef} className="mt-10 flex flex-wrap gap-4">
-              <button className="group inline-flex items-center gap-2 rounded-full bg-[#f7f2ea] px-7 py-3.5 text-sm font-semibold text-black transition hover:scale-[1.02]">
+            <div
+              ref={actionsRef}
+              className="mt-7 flex flex-wrap gap-3 sm:mt-8 sm:gap-4 lg:mt-10"
+            >
+              <button className="group inline-flex items-center gap-2 rounded-full bg-[#f7f2ea] px-5 py-3 text-xs font-semibold text-black transition hover:scale-[1.02] sm:px-7 sm:py-3.5 sm:text-sm">
                 Explore Collection
                 <ArrowRight
                   size={18}
@@ -484,14 +640,14 @@ export default function NextSection() {
                 />
               </button>
 
-              <button className="rounded-full border border-white/14 bg-white/[0.03] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-xl transition hover:bg-white/[0.06]">
+              <button className="rounded-full border border-white/14 bg-white/[0.03] px-5 py-3 text-xs font-semibold text-white backdrop-blur-xl transition hover:bg-white/[0.06] sm:px-7 sm:py-3.5 sm:text-sm">
                 Read More
               </button>
             </div>
 
             <div
               ref={chapterCardRef}
-              className="mt-14 max-w-[560px] rounded-[30px] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl"
+              className="mt-8 w-full rounded-[26px] border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl sm:mt-10 sm:rounded-[30px] sm:p-6 md:max-w-[560px] lg:mt-14"
             >
               <div className="relative h-[2px] w-full overflow-hidden rounded-full bg-white/10">
                 <div
@@ -502,21 +658,21 @@ export default function NextSection() {
 
               <p
                 ref={chapterNoRef}
-                className="mt-6 text-[11px] uppercase tracking-[0.34em] text-[#d8aa70]"
+                className="mt-5 text-[10px] uppercase tracking-[0.28em] text-[#d8aa70] sm:mt-6 sm:text-[11px] sm:tracking-[0.34em]"
               >
                 01
               </p>
 
               <p
                 ref={chapterLabelRef}
-                className="mt-3 text-sm uppercase tracking-[0.22em] text-white/46"
+                className="mt-3 text-xs uppercase tracking-[0.18em] text-white/46 sm:text-sm sm:tracking-[0.22em]"
               >
                 Editorial Flow
               </p>
 
               <h3
                 ref={chapterTitleRef}
-                className="mt-3 text-2xl font-semibold tracking-[-0.04em]"
+                className="mt-3 text-xl font-semibold tracking-[-0.04em] sm:text-2xl"
               >
                 A premium library is more than covers on a screen.
               </h3>
@@ -525,107 +681,103 @@ export default function NextSection() {
                 ref={chapterDescRef}
                 className="mt-3 text-sm leading-7 text-white/60"
               >
-                Strong typography, controlled motion, layered surfaces, and disciplined spacing create the feeling of a real premium brand.
+                Strong typography, controlled motion, layered surfaces, and
+                disciplined spacing create the feeling of a real premium brand.
               </p>
             </div>
           </div>
 
-          <div className="relative z-10 flex items-center justify-center [perspective:3000px]">
+          <div className="order-2 relative z-10">
+            <div className="hidden md:flex items-center justify-center [perspective:3000px]">
+              <div
+                ref={stageRef}
+                className="relative h-[460px] w-full max-w-[920px] sm:h-[520px] md:h-[620px] lg:h-[760px]"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <div
+                  ref={bigWordRef}
+                  className="absolute left-1/2 top-[10%] z-0 -translate-x-1/2 text-[52px] font-semibold uppercase tracking-[-0.08em] text-white/10 sm:text-[72px] md:text-[110px] lg:top-[12%] lg:text-[210px]"
+                >
+                  CURATED
+                </div>
+
+                <div
+                  ref={shadowRef}
+                  className="absolute left-1/2 top-[78%] h-[90px] w-[290px] -translate-x-1/2 rounded-full bg-black/80 blur-[30px] sm:h-[110px] sm:w-[380px] sm:blur-[36px] md:h-[130px] md:w-[520px] md:blur-[46px] lg:top-[76%] lg:h-[150px] lg:w-[680px] lg:blur-[56px]"
+                />
+
+                <FeaturePanel
+                  refProp={panel1Ref}
+                  align="left"
+                  eyebrow="Collector Notes"
+                  title="Bound for people who notice detail."
+                  body="Rich texture, balanced spacing, restrained highlights, and editorial composition that feels expensive."
+                  stat="12 Editions"
+                />
+
+                <FeaturePanel
+                  refProp={panel2Ref}
+                  align="center"
+                  eyebrow="Reader Atmosphere"
+                  title="Mood before motion."
+                  body="Smooth reveals, warm gold depth, and visual silence that lets the section breathe like luxury branding."
+                  stat="Premium Flow"
+                  featured
+                />
+
+                <FeaturePanel
+                  refProp={panel3Ref}
+                  align="right"
+                  eyebrow="Library Identity"
+                  title="A collection with one visual language."
+                  body="The panels feel related, the typography feels intentional, and the transitions feel directed."
+                  stat="Curated World"
+                />
+              </div>
+            </div>
+
             <div
-              ref={stageRef}
-              className="relative h-[760px] w-full max-w-[920px]"
-              style={{ transformStyle: "preserve-3d" }}
+              ref={mobileStageRef}
+              className="md:hidden relative mt-6"
             >
               <div
                 ref={bigWordRef}
-                className="absolute left-1/2 top-[12%] z-0 -translate-x-1/2 text-[110px] font-semibold uppercase tracking-[-0.08em] text-white/10 lg:text-[210px]"
+                className="pointer-events-none absolute left-1/2 top-[-18px] z-0 -translate-x-1/2 text-[52px] font-semibold uppercase tracking-[-0.08em] text-white/10"
               >
                 CURATED
               </div>
 
-              <div
-                ref={shadowRef}
-                className="absolute left-1/2 top-[76%] h-[150px] w-[680px] -translate-x-1/2 rounded-full bg-black/80 blur-[56px]"
-              />
+              <div className="relative z-10 space-y-4 pt-10">
+                <MobileFeatureCard
+                  refProp={mobileCard1Ref}
+                  eyebrow={mobileCards[0].eyebrow}
+                  title={mobileCards[0].title}
+                  body={mobileCards[0].body}
+                  stat={mobileCards[0].stat}
+                />
 
-              <FeaturePanel
-                refProp={panel1Ref}
-                align="left"
-                eyebrow="Collector Notes"
-                title="Bound for people who notice detail."
-                body="Rich texture, balanced spacing, restrained highlights, and editorial composition that feels expensive."
-                stat="12 Editions"
-              />
+                <MobileFeatureCard
+                  refProp={mobileCard2Ref}
+                  eyebrow={mobileCards[1].eyebrow}
+                  title={mobileCards[1].title}
+                  body={mobileCards[1].body}
+                  stat={mobileCards[1].stat}
+                  featured
+                />
 
-              <FeaturePanel
-                refProp={panel2Ref}
-                align="center"
-                eyebrow="Reader Atmosphere"
-                title="Mood before motion."
-                body="Smooth reveals, warm gold depth, and visual silence that lets the section breathe like luxury branding."
-                stat="Premium Flow"
-                featured
-              />
-
-              <FeaturePanel
-                refProp={panel3Ref}
-                align="right"
-                eyebrow="Library Identity"
-                title="A collection with one visual language."
-                body="The panels feel related, the typography feels intentional, and the transitions feel directed."
-                stat="Curated World"
-              />
+                <MobileFeatureCard
+                  refProp={mobileCard3Ref}
+                  eyebrow={mobileCards[2].eyebrow}
+                  title={mobileCards[2].title}
+                  body={mobileCards[2].body}
+                  stat={mobileCards[2].stat}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-
-    <section className="block md:hidden">
-      <div className="overflow-hidden rounded-[34px] border border-white/10 bg-white/[0.03] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-        <p className="inline-flex rounded-full border border-[#d8aa70]/16 bg-[#d8aa70]/8 px-3 py-1.5 text-[10px] uppercase tracking-[0.28em] text-[#d8aa70]">
-          Editorial Flow
-        </p>
-
-        <h2 className="mt-4 text-2xl font-semibold leading-[0.95] tracking-[-0.05em] text-white">
-          A premium library needs
-          <span className="block text-[#d8aa70]">clear visual rhythm.</span>
-        </h2>
-
-        <p className="mt-4 text-sm leading-7 text-white/60">
-          Strong typography, calm motion, layered surfaces, and proper spacing
-          make the mobile experience feel like an app product.
-        </p>
-
-        <div className="mt-5 space-y-3">
-          <div className="rounded-[24px] border border-white/10 bg-white/[0.04] p-4">
-            <p className="text-[10px] uppercase tracking-[0.28em] text-[#f1d8ac]">
-              Chapter 01
-            </p>
-            <h3 className="mt-3 text-lg font-semibold text-white">
-              Editorial Flow
-            </h3>
-            <p className="mt-2 text-sm leading-7 text-white/55">
-              Everything should feel connected and premium.
-            </p>
-          </div>
-
-          <div className="rounded-[24px] border border-white/10 bg-white/[0.04] p-4">
-            <p className="text-[10px] uppercase tracking-[0.28em] text-[#f1d8ac]">
-              Chapter 02
-            </p>
-            <h3 className="mt-3 text-lg font-semibold text-white">
-              Reader Mood
-            </h3>
-            <p className="mt-2 text-sm leading-7 text-white/55">
-              Quiet, rich, and intentional.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  </>
-
   );
 }
 
@@ -678,6 +830,49 @@ function FeaturePanel({
           <div className="inline-flex w-fit rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-[11px] uppercase tracking-[0.32em] text-white/56">
             {stat}
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobileFeatureCard({
+  refProp,
+  eyebrow,
+  title,
+  body,
+  stat,
+  featured = false,
+}) {
+  return (
+    <div
+      ref={refProp}
+      className={`relative w-full overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-[10px] shadow-[0_24px_80px_rgba(0,0,0,0.34)] backdrop-blur-xl ${
+        featured ? "ring-1 ring-[#d8aa70]/20" : ""
+      }`}
+      style={{ willChange: "transform, opacity" }}
+    >
+      <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.08),transparent_26%,transparent_72%,rgba(192,138,74,0.08))]" />
+      <div className="absolute left-[10%] top-[8%] h-[36%] w-[68%] rotate-[14deg] bg-white/10 blur-[28px]" />
+      <div className="absolute inset-[16px] rounded-[20px] border border-white/10" />
+      <div className="absolute inset-[24px] rounded-[16px] border border-white/6" />
+      <div className="absolute bottom-0 left-0 h-[28%] w-full bg-[linear-gradient(to_top,rgba(0,0,0,0.28),transparent)]" />
+
+      <div className="relative z-10 flex min-h-[240px] flex-col justify-between p-5">
+        <div>
+          <p className="text-[9px] uppercase tracking-[0.28em] text-[#f1d8ac]">
+            {eyebrow}
+          </p>
+
+          <h3 className="mt-4 text-[26px] font-semibold leading-[0.96] tracking-[-0.05em] text-white">
+            {title}
+          </h3>
+
+          <p className="mt-4 text-sm leading-7 text-white/68">{body}</p>
+        </div>
+
+        <div className="mt-6 inline-flex w-fit rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-[10px] uppercase tracking-[0.24em] text-white/56">
+          {stat}
         </div>
       </div>
     </div>
